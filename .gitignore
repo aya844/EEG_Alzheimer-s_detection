@@ -1,0 +1,27 @@
+# Environnement virtuel
+venv/
+.env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Fichiers système
+.DS_Store
+
+# Logs
+*.log
+
+# Données (à adapter)
+data/
+*.csv
+
+# Sorties générées
+*.pdf
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets
+.env
+config.json

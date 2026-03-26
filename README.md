@@ -20,7 +20,7 @@ Référence méthodologique (inspiration features): https://pmc.ncbi.nlm.nih.gov
 ## Installation
 
 ### Pré-requis
-- Python 3.9 ou supérieur (recommandé)
+- Python 3.9 ou supérieur (3.11 recommandé)
 - pip
 - Optionnel: environnement virtuel
 
@@ -41,19 +41,25 @@ Le fichier `requirements.txt` inclut notamment: `numpy`, `pandas`, `scipy`, `sci
 
 ## Données — OpenNeuro ds004504 (prétraité)
 
+Le notebook détecte automatiquement la racine des données (data_root) parmi les chemins suivants, dans cet ordre:
+- `..\data\ds004504`
+- `./data/ds004504`
+
+Il privilégie la lecture des fichiers EEGLAB prétraités (`*.set`) dans `derivatives/sub-XXX/eeg/`, avec repli automatique vers une lecture BIDS brute si disponible.
+
 ### Téléchargement via AWS S3 (sans signature)
 ```powershell
-aws s3 sync --no-sign-request s3://openneuro.org/ds004504 ds004504-download/
+aws s3 sync --no-sign-request s3://openneuro.org/ds004504 data/ds004504/
 ```
 
-### Organisation conseillée dans ce dépôt
-- Créer le dossier `data\ds004504` à la racine.
-- Copier le contenu téléchargé dans `data\ds004504\…` afin d’obtenir une hiérarchie comme:
+### Organisation conseillée dans ce dépôt (données locales)
+- Si vos données sont déjà installées en local sous `data\ds004504`, vérifiez que la hiérarchie ressemble à:
   ```text
   data\ds004504\derivatives\sub-001\eeg\sub-001_task-eyesclosed_eeg.set
   data\ds004504\derivatives\sub-002\eeg\sub-002_task-eyesclosed_eeg.set
   …
   ```
+
 
 #### Remarques
 - Le dataset ds004504 contient des enregistrements EEG (repos, yeux fermés) pour HC, MCI et AD. Voir la page OpenNeuro pour les détails.
@@ -70,7 +76,9 @@ aws s3 sync --no-sign-request s3://openneuro.org/ds004504 ds004504-download/
    jupyter notebook
    ```
 3. Ouvrir `notebooks\code.ipynb` et exécuter les cellules dans l’ordre.
-4. Le notebook s’attend à trouver les données sous `data\ds004504\…`.
+4. Le notebook détecte automatiquement `data_root` (voir plus haut). Aucune jonction n’est nécessaire si vos données sont sous `data\ds004504`.
+   - Au lancement, la première cellule affiche: «Racine des données détectée: …» et indique le type de lecture (EEGLAB prioritaire, BIDS en repli).
+   - Les figures de la section 7 sont enregistrées automatiquement sous `results\figures` à la racine du projet (et non sous `notebooks\...`).
 
 ## Extraction de caractéristiques (inspirée de PMC11048688)
 
@@ -88,6 +96,21 @@ Le pipeline regroupe descripteurs temps, fréquence et temps-fréquence, via `mn
 - Modélisation: classifieurs classiques (SVM, RandomForest, XGBoost) avec validation croisée stratifiée pour distinguer HC/MCI/AD.
 
 Le papier PMC11048688 souligne l’intérêt des ratios de bandes et des entropies pour discriminer les classes. Le notebook suit ce principe avec les bibliothèques listées dans `requirements.txt`.
+
+## Dépannage rapide
+
+- Chemin de données: vérifiez le message imprimé «Racine des données détectée: …». Assurez-vous que:
+  - `data\ds004504\derivatives\sub-XXX\eeg\*_eeg.set` existe, ou
+  - la structure BIDS brute est présente si vous ne disposez pas des `.set`.
+- ImportError (mne-bids, antropy, xgboost):
+  ```powershell
+  pip install -r requirements.txt
+  ```
+- AWS CLI manquant:
+  ```powershell
+  pip install awscli
+  ```
+  puis rouvrez/activez le terminal.
 
 
 

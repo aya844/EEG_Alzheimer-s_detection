@@ -1,0 +1,14 @@
+numpy
+pandas
+scipy
+scikit-learn
+mne
+mne-bids
+antropy
+xgboost
+matplotlib
+seaborn
+pywavelets
+awscli
+jupyter
+ipykernel
